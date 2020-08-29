@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, Text, View, Vibration } from "react-native";
+import { StyleSheet, Text, View, Vibration, Button } from "react-native";
 import { Accelerometer, ThreeAxisMeasurement } from "expo-sensors";
 import { Subscription } from "@unimodules/core";
+import { RoomIdLabel } from "../../Const/RoomId";
 
 const UPDATE_MS = 100;
 const THRESHOLD = 800;
@@ -37,6 +38,7 @@ const styles = StyleSheet.create({
   },
 });
 
+// 計算がばいので修正
 const diffMeasurement = (
   before: ThreeAxisMeasurement,
   after: ThreeAxisMeasurement
@@ -47,7 +49,13 @@ const diffMeasurement = (
   return afterValue - beforeValue;
 };
 
-const Container = (): React.ReactElement => {
+interface ContainerProps {
+  leaveRoom: () => void;
+  roomId: number;
+}
+
+// サーバーに接続する
+const Container = (props: ContainerProps): React.ReactElement => {
   const [data, setData] = useState<ThreeAxisMeasurement>({ x: 0, y: 0, z: 0 });
   const [lastThreeAxisMeasurement, setLastThreeAxisMeasurement] = useState<
     ThreeAxisMeasurement
@@ -96,6 +104,11 @@ const Container = (): React.ReactElement => {
       <Text style={styles.text}>
         x: {round(data.x)} y: {round(data.y)} z: {round(data.z)} speed: {speed}
       </Text>
+      <Button
+        title={RoomIdLabel[props.roomId] + "から出る"}
+        onPress={() => props.leaveRoom()}
+        color="#f194ff"
+      />
     </View>
   );
 };

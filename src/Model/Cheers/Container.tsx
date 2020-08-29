@@ -23,3 +23,8 @@ export const SetCheeredListener = (
     return;
   });
 };
+
+export const Disconnect = (): void => {
+  socket.disconnect();
+  return;
+};

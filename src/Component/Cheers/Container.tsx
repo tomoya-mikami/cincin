@@ -6,7 +6,11 @@ import { Audio } from "expo-av";
 import { RoomIdLabel } from "../../Const/RoomId";
 import { AudioId, AudioPath } from "../../Const/AudioId";
 import Styles from "./Style";
-import { SendCheer, SetCheeredListener } from "../../Model/Cheers/Container";
+import {
+  SendCheer,
+  SetCheeredListener,
+  Disconnect,
+} from "../../Model/Cheers/Container";
 
 const UPDATE_MS = 100;
 const THRESHOLD = 10000;
@@ -108,7 +112,7 @@ const Container = (props: ContainerProps): React.ReactElement => {
 
   const _unsubscribe = () => {
     subscription && subscription.remove();
-    setSubscription(subscription);
+    return;
   };
 
   return (
@@ -120,7 +124,10 @@ const Container = (props: ContainerProps): React.ReactElement => {
       <Text style={Styles.text}>振って乾杯！</Text>
       <View style={Styles.button}>
         <TouchableOpacity
-          onPress={() => {
+          onPress={async () => {
+            Disconnect();
+            await sound?.unloadAsync();
+            _unsubscribe();
             props.leaveRoom();
           }}
         >

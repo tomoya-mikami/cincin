@@ -1,6 +1,6 @@
 import React from "react";
-import { StyleSheet, View, Text } from "react-native";
-import Accelerometer from "./Component/Accelerometer/Container";
+import { StyleSheet, View } from "react-native";
+import Accelerometer from "./Component/Cheers/Container";
 
 const App = (): React.ReactElement => {
   return (

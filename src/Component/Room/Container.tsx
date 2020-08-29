@@ -3,7 +3,7 @@ import { Button, View, Text } from "react-native";
 import { RoomId, RoomIdLabel } from "../../Const/RoomId";
 
 interface ContainerProps {
-  joinRoom: (roomId: number) => void;
+  joinRoom: (roomId: RoomId) => void;
 }
 
 // TODO

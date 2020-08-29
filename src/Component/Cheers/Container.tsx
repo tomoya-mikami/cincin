@@ -3,10 +3,11 @@ import { Text, View, Vibration, Button } from "react-native";
 import { Accelerometer, ThreeAxisMeasurement } from "expo-sensors";
 import { Subscription } from "@unimodules/core";
 import { Audio } from "expo-av";
-import { RoomIdLabel } from "../../Const/RoomId";
+import { RoomIdLabel, ResponseObj, RoomId } from "../../Const/RoomId";
 import { AudioId } from "../../Const/AudioId";
 import { AudioPath } from "../../Const/AudioId";
 import Styles from "./Style";
+import { SendCheer, SetCheeredListener } from "../../Model/Cheers/Container";
 
 const UPDATE_MS = 100;
 const THRESHOLD = 10000;
@@ -31,6 +32,10 @@ interface ContainerProps {
 // サーバーに接続する
 const Container = (props: ContainerProps): React.ReactElement => {
   const [data, setData] = useState<ThreeAxisMeasurement>({ x: 0, y: 0, z: 0 });
+  const [cheered, setCheered] = useState<ResponseObj>({
+    roomId: RoomId.AKIU,
+    time: Date.now(),
+  });
   const [lastThreeAxisMeasurement, setLastThreeAxisMeasurement] = useState<
     ThreeAxisMeasurement
   >({ x: 0, y: 0, z: 0 });
@@ -39,6 +44,10 @@ const Container = (props: ContainerProps): React.ReactElement => {
     undefined
   );
   const [sound, setSound] = useState<Audio.Sound | undefined>(undefined);
+
+  const diffTimeCheck = (timeA: number, timeB: number) => {
+    return Math.abs(timeA - timeB) < 3 * 1000;
+  };
 
   useEffect(() => {
     (async () => {
@@ -50,6 +59,7 @@ const Container = (props: ContainerProps): React.ReactElement => {
         console.log(error);
       }
       _subscribe();
+      SetCheeredListener(setCheered);
       Accelerometer.setUpdateInterval(UPDATE_MS);
     })();
     return () => {
@@ -71,7 +81,12 @@ const Container = (props: ContainerProps): React.ReactElement => {
       if (sound !== undefined) {
         (async () => {
           const soundStatus = await sound.getStatusAsync();
-          if (soundStatus.isLoaded && !soundStatus.isPlaying) {
+          SendCheer(props.roomId, Date.now());
+          if (
+            soundStatus.isLoaded &&
+            !soundStatus.isPlaying &&
+            diffTimeCheck(cheered.time, Date.now())
+          ) {
             Vibration.vibrate(VIBRATION_DURATION);
             sound.replayAsync();
           }

@@ -58,14 +58,6 @@ const Container = (): React.ReactElement => {
   );
 
   useEffect(() => {
-    _subscribe();
-    Accelerometer.setUpdateInterval(UPDATE_MS);
-    return () => {
-      _unsubscribe();
-    };
-  }, []);
-
-  useEffect(() => {
     const diff =
       (Math.abs(diffMeasurement(lastThreeAxisMeasurement, data)) / UPDATE_MS) *
       10000;

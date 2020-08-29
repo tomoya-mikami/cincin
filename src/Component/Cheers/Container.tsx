@@ -9,7 +9,7 @@ import { AudioPath } from "../../Const/AudioId";
 import Styles from "./Style";
 
 const UPDATE_MS = 100;
-const THRESHOLD = 800;
+const THRESHOLD = 10000;
 const VIBRATION_DURATION = 300;
 
 // 計算がばいので修正

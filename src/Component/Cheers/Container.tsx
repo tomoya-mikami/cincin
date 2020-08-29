@@ -11,7 +11,7 @@ import { SendCheer, SetCheeredListener } from "../../Model/Cheers/Container";
 
 const UPDATE_MS = 100;
 const THRESHOLD = 10000;
-const NO_WAIT_VIBRATION = 0;
+const VIBRATION_DURATION = 300;
 
 // 計算がばいので修正
 const diffMeasurement = (
@@ -87,7 +87,7 @@ const Container = (props: ContainerProps): React.ReactElement => {
             !soundStatus.isPlaying &&
             diffTimeCheck(cheered.time, Date.now())
           ) {
-            Vibration.vibrate(NO_WAIT_VIBRATION);
+            Vibration.vibrate(VIBRATION_DURATION);
             sound.replayAsync();
           }
         })();

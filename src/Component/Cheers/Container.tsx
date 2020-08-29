@@ -2,9 +2,10 @@ import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, View, Vibration, Button } from "react-native";
 import { Accelerometer, ThreeAxisMeasurement } from "expo-sensors";
 import { Subscription } from "@unimodules/core";
-import PlayAudio from "../Audio/PlayAudio";
+import { Audio } from "expo-av";
 import { RoomIdLabel } from "../../Const/RoomId";
 import { AudioId } from "../../Const/AudioId";
+import { AudioPath } from "../../Const/AudioId";
 
 const UPDATE_MS = 100;
 const THRESHOLD = 800;
@@ -66,12 +67,27 @@ const Container = (props: ContainerProps): React.ReactElement => {
   const [subscription, setSubscription] = useState<Subscription | undefined>(
     undefined
   );
+  const [sound, setSound] = useState<Audio.Sound | undefined>(undefined);
 
   useEffect(() => {
-    _subscribe();
-    Accelerometer.setUpdateInterval(UPDATE_MS);
+    (async () => {
+      try {
+        const soundSetUp = new Audio.Sound();
+        await soundSetUp.loadAsync(AudioPath[AudioId.DEFAULT_CIN]);
+        setSound(soundSetUp);
+      } catch (error) {
+        console.log(error);
+      }
+      _subscribe();
+      Accelerometer.setUpdateInterval(UPDATE_MS);
+    })();
     return () => {
-      _unsubscribe();
+      (async () => {
+        if (sound !== undefined) {
+          await sound.unloadAsync();
+        }
+        _unsubscribe();
+      })();
     };
   }, []);
 
@@ -82,20 +98,12 @@ const Container = (props: ContainerProps): React.ReactElement => {
     setSpeed(diff);
     if (speed > THRESHOLD) {
       Vibration.vibrate(PATTERN);
-      (async () => {
-        await PlayAudio(AudioId.DEFAULT_CIN);
-      })();
+      if (sound !== undefined) {
+        sound.playAsync();
+      }
     }
     setLastThreeAxisMeasurement(data);
   }, [data.x, data.y, data.z]);
-
-  useEffect(() => {
-    _subscribe();
-    Accelerometer.setUpdateInterval(UPDATE_MS);
-    return () => {
-      _unsubscribe();
-    };
-  }, []);
 
   const _subscribe = () => {
     const listener = Accelerometer.addListener((accelerometerData) => {

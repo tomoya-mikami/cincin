@@ -1,30 +1,14 @@
 import React, { useState, useEffect } from "react";
-import {
-  Button,
-  StyleSheet,
-  Text,
-  View,
-  Vibration,
-  Platform,
-} from "react-native";
+import { StyleSheet, Text, View, Vibration } from "react-native";
 import { Accelerometer, ThreeAxisMeasurement } from "expo-sensors";
 import { Subscription } from "@unimodules/core";
 
-const UPDATE_MS = 300;
-const THRESHOLD = 8;
+const UPDATE_MS = 100;
+const THRESHOLD = 800;
 
 const ONE_SECOND_IN_MS = 1000;
 
-const PATTERN = [
-  1 * ONE_SECOND_IN_MS,
-  2 * ONE_SECOND_IN_MS,
-  3 * ONE_SECOND_IN_MS,
-];
-
-const PATTERN_DESC =
-  Platform.OS === "android"
-    ? "wait 1s, vibrate 2s, wait 3s"
-    : "wait 1s, vibrate, wait 2s, vibrate, wait 3s";
+const PATTERN = [1 * ONE_SECOND_IN_MS];
 
 const styles = StyleSheet.create({
   buttonContainer: {
@@ -65,12 +49,13 @@ const diffMeasurement = (
 
 const Container = (): React.ReactElement => {
   const [data, setData] = useState<ThreeAxisMeasurement>({ x: 0, y: 0, z: 0 });
+  const [lastThreeAxisMeasurement, setLastThreeAxisMeasurement] = useState<
+    ThreeAxisMeasurement
+  >({ x: 0, y: 0, z: 0 });
   const [speed, setSpeed] = useState<number>(0);
   const [subscription, setSubscription] = useState<Subscription | undefined>(
     undefined
   );
-  const [doVibration, setVibration] = useState<boolean>(true);
-  let lastThreeAxisMeasurement: ThreeAxisMeasurement = data;
 
   useEffect(() => {
     _subscribe();
@@ -86,18 +71,10 @@ const Container = (): React.ReactElement => {
       10000;
     setSpeed(diff);
     if (speed > THRESHOLD) {
-      setVibration(true);
       Vibration.vibrate(PATTERN);
     }
-    lastThreeAxisMeasurement = data;
+    setLastThreeAxisMeasurement(data);
   }, [data.x, data.y, data.z]);
-
-  useEffect(() => {
-    if (doVibration === false) {
-      Vibration.vibrate(PATTERN);
-      setVibration(false);
-    }
-  }, [doVibration]);
 
   useEffect(() => {
     _subscribe();
@@ -127,10 +104,6 @@ const Container = (): React.ReactElement => {
       <Text style={styles.text}>
         x: {round(data.x)} y: {round(data.y)} z: {round(data.z)} speed: {speed}
       </Text>
-      <Button
-        title="Vibrate with pattern"
-        onPress={() => Vibration.vibrate(PATTERN)}
-      />
     </View>
   );
 };

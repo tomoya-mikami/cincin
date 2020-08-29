@@ -19,7 +19,7 @@ const Styles = StyleSheet.create({
   },
   buttonText: {
     fontSize: 32,
-    lineHeight: 49,
+    lineHeight: 48,
     textAlign: "center",
   },
   HeadingText: {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Text, View, Vibration, Button } from "react-native";
+import { Text, View, Vibration, TouchableOpacity, Image } from "react-native";
 import { Accelerometer, ThreeAxisMeasurement } from "expo-sensors";
 import { Subscription } from "@unimodules/core";
 import { Audio } from "expo-av";
@@ -109,18 +109,23 @@ const Container = (props: ContainerProps): React.ReactElement => {
   };
 
   return (
-    <View style={Styles.sensor}>
-      <Text style={Styles.text}>
-        Accelerometer: (in Gs where 1 G = 9.81 m s^-2)
-      </Text>
-      <Text style={Styles.text}>
-        x: {round(data.x)} y: {round(data.y)} z: {round(data.z)} speed: {speed}
-      </Text>
-      <Button
-        title={RoomIdLabel[props.roomId] + "から出る"}
-        onPress={() => props.leaveRoom()}
-        color="#f194ff"
+    <View style={Styles.container}>
+      <Image
+        style={Styles.image}
+        source={require("../../../assets/splash.png")}
       />
+      <Text style={Styles.text}>振って乾杯！</Text>
+      <View style={Styles.button}>
+        <TouchableOpacity
+          onPress={() => {
+            props.leaveRoom();
+          }}
+        >
+          <Text style={Styles.buttonText}>{`${
+            RoomIdLabel[props.roomId]
+          }から出る`}</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };

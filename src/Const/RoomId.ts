@@ -1,3 +1,8 @@
+export type ResponseObj = {
+  roomId: RoomId;
+  time: number;
+};
+
 export enum RoomId {
   NO_ROOM = 0,
   KUSATSU = 1, // 草津結衣奈

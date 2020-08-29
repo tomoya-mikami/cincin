@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, View, Vibration, Button } from "react-native";
 import { Accelerometer, ThreeAxisMeasurement } from "expo-sensors";
 import { Subscription } from "@unimodules/core";
-import { RoomIdLabel } from "../../Const/RoomId";
-import { SendCheer } from "../../Model/Cheers/Container";
+import { RoomIdLabel, ResponseObj, RoomId } from "../../Const/RoomId";
+import { SendCheer, SetCheeredListener } from "../../Model/Cheers/Container";
 
 const UPDATE_MS = 100;
 const THRESHOLD = 800;
@@ -58,6 +58,10 @@ interface ContainerProps {
 // サーバーに接続する
 const Container = (props: ContainerProps): React.ReactElement => {
   const [data, setData] = useState<ThreeAxisMeasurement>({ x: 0, y: 0, z: 0 });
+  const [cheered, setCheered] = useState<ResponseObj>({
+    roomId: RoomId.AKIU,
+    time: Date.now(),
+  });
   const [lastThreeAxisMeasurement, setLastThreeAxisMeasurement] = useState<
     ThreeAxisMeasurement
   >({ x: 0, y: 0, z: 0 });
@@ -80,6 +84,7 @@ const Container = (props: ContainerProps): React.ReactElement => {
 
   useEffect(() => {
     _subscribe();
+    SetCheeredListener(setCheered);
     Accelerometer.setUpdateInterval(UPDATE_MS);
     return () => {
       _unsubscribe();

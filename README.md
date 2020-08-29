@@ -1,18 +1,13 @@
-# ReactNativeのtutorialを自分なりにディレクトリをカスタマイズする
+# CinCin
+![cincin](./cincin.png "image")
 
-## チュートリアル
+## expo document
 
-https://docs.expo.io/tutorial/planning/
+- [vibration](https://docs.expo.io/versions/latest/react-native/vibration/)
+- [accelerometer](https://docs.expo.io/versions/latest/sdk/accelerometer/)
 
-## 方針
+## sound
 
-- まず大きな要素(チュートリアルで言えば写真アップロード機能)単位でディレクトリを作る
-- 要素の中ではパーツ単位でディレクトリを作る
-
-## 入れたもの
-
-- typescript
-- eslint
-- prettier
+- [乾杯音](http://commons.nicovideo.jp/material/nc102411)
 
 

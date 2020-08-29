@@ -99,7 +99,7 @@ const Container = (props: ContainerProps): React.ReactElement => {
     if (speed > THRESHOLD) {
       Vibration.vibrate(PATTERN);
       if (sound !== undefined) {
-        sound.playAsync();
+        sound.replayAsync();
       }
     }
     setLastThreeAxisMeasurement(data);

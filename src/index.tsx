@@ -1,22 +1,12 @@
 import React from "react";
-import { StyleSheet, View } from "react-native";
-import Accelerometer from "./Component/Cheers/Container";
+import App from "./Component/App";
 
-const App = (): React.ReactElement => {
-  return (
-    <View style={styles.container}>
-      <Accelerometer />
-    </View>
-  );
+/**
+ * bootstrap
+ * 今はAppだけだが, 何か最初に設定しないと行けないものがあればここで実装
+ */
+const Index = (): React.ReactElement => {
+  return <App />;
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
-
-export default App;
+export default Index;

@@ -45,6 +45,10 @@ const Container = (props: ContainerProps): React.ReactElement => {
   );
   const [sound, setSound] = useState<Audio.Sound | undefined>(undefined);
 
+  const diffTimeCheck = (timeA: number, timeB: number) => {
+    return Math.abs(timeA - timeB) < 3 * 1000;
+  };
+
   useEffect(() => {
     (async () => {
       try {
@@ -77,9 +81,13 @@ const Container = (props: ContainerProps): React.ReactElement => {
       if (sound !== undefined) {
         (async () => {
           const soundStatus = await sound.getStatusAsync();
-          if (soundStatus.isLoaded && !soundStatus.isPlaying) {
+          SendCheer(props.roomId, Date.now());
+          if (
+            soundStatus.isLoaded &&
+            !soundStatus.isPlaying &&
+            diffTimeCheck(cheered.time, Date.now())
+          ) {
             Vibration.vibrate(NO_WAIT_VIBRATION);
-            SendCheer(props.roomId, Date.now());
             sound.replayAsync();
           }
         })();

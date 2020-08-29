@@ -3,9 +3,8 @@ import { Text, View, Vibration, Button } from "react-native";
 import { Accelerometer, ThreeAxisMeasurement } from "expo-sensors";
 import { Subscription } from "@unimodules/core";
 import { Audio } from "expo-av";
-import { RoomIdLabel, ResponseObj, RoomId } from "../../Const/RoomId";
-import { AudioId } from "../../Const/AudioId";
-import { AudioPath } from "../../Const/AudioId";
+import { RoomIdLabel } from "../../Const/RoomId";
+import { AudioId, AudioPath } from "../../Const/AudioId";
 import Styles from "./Style";
 import { SendCheer, SetCheeredListener } from "../../Model/Cheers/Container";
 
@@ -32,35 +31,39 @@ interface ContainerProps {
 // サーバーに接続する
 const Container = (props: ContainerProps): React.ReactElement => {
   const [data, setData] = useState<ThreeAxisMeasurement>({ x: 0, y: 0, z: 0 });
-  const [cheered, setCheered] = useState<ResponseObj>({
-    roomId: RoomId.AKIU,
-    time: Date.now(),
-  });
+  const [cheered, setCheered] = useState<number>(0);
   const [lastThreeAxisMeasurement, setLastThreeAxisMeasurement] = useState<
     ThreeAxisMeasurement
   >({ x: 0, y: 0, z: 0 });
-  const [speed, setSpeed] = useState<number>(0);
   const [subscription, setSubscription] = useState<Subscription | undefined>(
     undefined
   );
   const [sound, setSound] = useState<Audio.Sound | undefined>(undefined);
-
   const diffTimeCheck = (timeA: number, timeB: number) => {
+    if (timeA === 0) {
+      return false;
+    }
     return Math.abs(timeA - timeB) < 3 * 1000;
   };
 
+  let isFirstAccess = true;
+  let overDiff = false;
+
   useEffect(() => {
     (async () => {
-      try {
-        const soundSetUp = new Audio.Sound();
-        await soundSetUp.loadAsync(AudioPath[AudioId.DEFAULT_CIN]);
-        setSound(soundSetUp);
-      } catch (error) {
-        console.log(error);
+      if (isFirstAccess) {
+        try {
+          const soundSetUp = new Audio.Sound();
+          await soundSetUp.loadAsync(AudioPath[AudioId.DEFAULT_CIN]);
+          setSound(soundSetUp);
+        } catch (error) {
+          console.log(error);
+        }
+        _subscribe();
+        SetCheeredListener(setCheered);
+        Accelerometer.setUpdateInterval(UPDATE_MS);
+        isFirstAccess = false;
       }
-      _subscribe();
-      SetCheeredListener(setCheered);
-      Accelerometer.setUpdateInterval(UPDATE_MS);
     })();
     return () => {
       (async () => {
@@ -76,25 +79,25 @@ const Container = (props: ContainerProps): React.ReactElement => {
     const diff =
       (Math.abs(diffMeasurement(lastThreeAxisMeasurement, data)) / UPDATE_MS) *
       10000;
-    setSpeed(diff);
-    if (speed > THRESHOLD) {
+    if (diff > THRESHOLD && overDiff === false) {
+      overDiff = true;
       if (sound !== undefined) {
         (async () => {
           const soundStatus = await sound.getStatusAsync();
-          SendCheer(props.roomId, Date.now());
-          if (
-            soundStatus.isLoaded &&
-            !soundStatus.isPlaying &&
-            diffTimeCheck(cheered.time, Date.now())
-          ) {
-            Vibration.vibrate(VIBRATION_DURATION);
-            sound.replayAsync();
+          if (soundStatus.isLoaded && !soundStatus.isPlaying) {
+            SendCheer(props.roomId, Date.now());
+            if (diffTimeCheck(cheered, Date.now())) {
+              Vibration.vibrate(VIBRATION_DURATION);
+              sound.replayAsync();
+            }
           }
         })();
       }
+    } else {
+      overDiff = false;
     }
     setLastThreeAxisMeasurement(data);
-  }, [data.x, data.y, data.z]);
+  }, [data.x]);
 
   const _subscribe = () => {
     const listener = Accelerometer.addListener((accelerometerData) => {
@@ -114,7 +117,7 @@ const Container = (props: ContainerProps): React.ReactElement => {
         Accelerometer: (in Gs where 1 G = 9.81 m s^-2)
       </Text>
       <Text style={Styles.text}>
-        x: {round(data.x)} y: {round(data.y)} z: {round(data.z)} speed: {speed}
+        x: {round(data.x)} y: {round(data.y)} z: {round(data.z)}
       </Text>
       <Button
         title={RoomIdLabel[props.roomId] + "から出る"}

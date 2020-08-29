@@ -12,29 +12,39 @@ const Container = (props: ContainerProps): React.ReactElement => {
     <View style={Styles.container}>
       <View style={Styles.buttonContainer}>
         <Text style={Styles.HeadingText}>グループを選択</Text>
-        <View style={Styles.button}>
+        <View style={Styles.buttonKusatsu}>
           <TouchableOpacity onPress={() => props.joinRoom(RoomId.KUSATSU)}>
-            <Text style={Styles.buttonText}>{RoomIdLabel[RoomId.KUSATSU]}</Text>
+            <Text style={Styles.buttonTextKusatsu}>
+              {RoomIdLabel[RoomId.KUSATSU]}
+            </Text>
           </TouchableOpacity>
         </View>
-        <View style={Styles.button}>
+        <View style={Styles.buttonHakone}>
           <TouchableOpacity onPress={() => props.joinRoom(RoomId.HAKONE)}>
-            <Text style={Styles.buttonText}>{RoomIdLabel[RoomId.HAKONE]}</Text>
+            <Text style={Styles.buttonTextHakone}>
+              {RoomIdLabel[RoomId.HAKONE]}
+            </Text>
           </TouchableOpacity>
         </View>
-        <View style={Styles.button}>
+        <View style={Styles.buttonAkiu}>
           <TouchableOpacity onPress={() => props.joinRoom(RoomId.AKIU)}>
-            <Text style={Styles.buttonText}>{RoomIdLabel[RoomId.AKIU]}</Text>
+            <Text style={Styles.buttonTextAkiu}>
+              {RoomIdLabel[RoomId.AKIU]}
+            </Text>
           </TouchableOpacity>
         </View>
-        <View style={Styles.button}>
+        <View style={Styles.buttonArima}>
           <TouchableOpacity onPress={() => props.joinRoom(RoomId.ARIMA)}>
-            <Text style={Styles.buttonText}>{RoomIdLabel[RoomId.ARIMA]}</Text>
+            <Text style={Styles.buttonTextArima}>
+              {RoomIdLabel[RoomId.ARIMA]}
+            </Text>
           </TouchableOpacity>
         </View>
-        <View style={Styles.button}>
+        <View style={Styles.buttonDogo}>
           <TouchableOpacity onPress={() => props.joinRoom(RoomId.DOGO)}>
-            <Text style={Styles.buttonText}>{RoomIdLabel[RoomId.DOGO]}</Text>
+            <Text style={Styles.buttonTextDogo}>
+              {RoomIdLabel[RoomId.DOGO]}
+            </Text>
           </TouchableOpacity>
         </View>
       </View>

@@ -1,10 +1,11 @@
 import React from "react";
 import { StyleSheet, View, Text } from "react-native";
+import Accelerometer from "./Component/Accelerometer/Container";
 
 const App = (): React.ReactElement => {
   return (
     <View style={styles.container}>
-      <Text>Welcome To CinCin! </Text>
+      <Accelerometer />
     </View>
   );
 };

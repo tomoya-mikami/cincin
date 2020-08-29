@@ -10,7 +10,7 @@ import Styles from "./Style";
 
 const UPDATE_MS = 100;
 const THRESHOLD = 800;
-const NO_WAIT_VIBRATION = 0;
+const VIBRATION_DURATION = 300;
 
 // 計算がばいので修正
 const diffMeasurement = (
@@ -72,7 +72,7 @@ const Container = (props: ContainerProps): React.ReactElement => {
         (async () => {
           const soundStatus = await sound.getStatusAsync();
           if (soundStatus.isLoaded && !soundStatus.isPlaying) {
-            Vibration.vibrate(NO_WAIT_VIBRATION);
+            Vibration.vibrate(VIBRATION_DURATION);
             sound.replayAsync();
           }
         })();

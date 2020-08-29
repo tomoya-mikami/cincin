@@ -32,9 +32,9 @@ interface ContainerProps {
   roomId: number;
 }
 
-// サーバーに接続する
 const Container = (props: ContainerProps): React.ReactElement => {
   const [data, setData] = useState<ThreeAxisMeasurement>({ x: 0, y: 0, z: 0 });
+  const [receivedCheered, setReceivedCheered] = useState<number>(0);
   const [cheered, setCheered] = useState<number>(0);
   const [lastThreeAxisMeasurement, setLastThreeAxisMeasurement] = useState<
     ThreeAxisMeasurement
@@ -44,7 +44,7 @@ const Container = (props: ContainerProps): React.ReactElement => {
   );
   const [sound, setSound] = useState<Audio.Sound | undefined>(undefined);
   const diffTimeCheck = (timeA: number, timeB: number) => {
-    if (timeA === 0) {
+    if (timeA === 0 || timeB === 0) {
       return false;
     }
     return Math.abs(timeA - timeB) < 3 * 1000;
@@ -53,6 +53,7 @@ const Container = (props: ContainerProps): React.ReactElement => {
   let isFirstAccess = true;
   let overDiff = false;
 
+  // 初期化
   useEffect(() => {
     (async () => {
       if (isFirstAccess) {
@@ -64,7 +65,7 @@ const Container = (props: ContainerProps): React.ReactElement => {
           console.log(error);
         }
         _subscribe();
-        SetCheeredListener(setCheered);
+        SetCheeredListener(setReceivedCheered);
         Accelerometer.setUpdateInterval(UPDATE_MS);
         isFirstAccess = false;
       }
@@ -79,29 +80,40 @@ const Container = (props: ContainerProps): React.ReactElement => {
     };
   }, []);
 
+  // 加速度がしきい値を超えた場合に更新する
   useEffect(() => {
     const diff =
       (Math.abs(diffMeasurement(lastThreeAxisMeasurement, data)) / UPDATE_MS) *
       10000;
     if (diff > THRESHOLD && overDiff === false) {
       overDiff = true;
-      if (sound !== undefined) {
-        (async () => {
-          const soundStatus = await sound.getStatusAsync();
-          if (soundStatus.isLoaded && !soundStatus.isPlaying) {
-            SendCheer(props.roomId, Date.now());
-            if (diffTimeCheck(cheered, Date.now())) {
-              Vibration.vibrate(VIBRATION_DURATION);
-              sound.replayAsync();
-            }
-          }
-        })();
-      }
+      const now = Date.now();
+      SendCheer(props.roomId, now);
+      setCheered(now);
     } else {
       overDiff = false;
     }
     setLastThreeAxisMeasurement(data);
   }, [data.x]);
+
+  // 自分と他人で最後にグラスを降った時刻が近い人がいれば鳴らす
+  useEffect(() => {
+    if (sound !== undefined) {
+      (async () => {
+        const soundStatus = await sound.getStatusAsync();
+        if (soundStatus.isLoaded && !soundStatus.isPlaying) {
+          if (diffTimeCheck(receivedCheered, cheered)) {
+            Vibration.vibrate(VIBRATION_DURATION);
+            try {
+              sound.replayAsync();
+            } catch (error) {
+              console.log(error);
+            }
+          }
+        }
+      })();
+    }
+  }, [cheered, receivedCheered]);
 
   const _subscribe = () => {
     const listener = Accelerometer.addListener((accelerometerData) => {

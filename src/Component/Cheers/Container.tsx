@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, Vibration, Button } from "react-native";
 import { Accelerometer, ThreeAxisMeasurement } from "expo-sensors";
 import { Subscription } from "@unimodules/core";
 import { RoomIdLabel } from "../../Const/RoomId";
+import { SendCheer } from "../../Model/Cheers/Container";
 
 const UPDATE_MS = 100;
 const THRESHOLD = 800;
@@ -72,6 +73,7 @@ const Container = (props: ContainerProps): React.ReactElement => {
     setSpeed(diff);
     if (speed > THRESHOLD) {
       Vibration.vibrate(PATTERN);
+      SendCheer(props.roomId, Date.now());
     }
     setLastThreeAxisMeasurement(data);
   }, [data.x, data.y, data.z]);

@@ -7,8 +7,6 @@ interface ContainerProps {
   joinRoom: (roomId: RoomId) => void;
 }
 
-// TODO
-// ボタンを押した際にサーバーにルームIDを送る
 const Container = (props: ContainerProps): React.ReactElement => {
   return (
     <View style={Styles.container}>

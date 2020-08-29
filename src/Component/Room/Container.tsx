@@ -11,7 +11,7 @@ const Container = (props: ContainerProps): React.ReactElement => {
   return (
     <View style={Styles.container}>
       <View style={Styles.buttonContainer}>
-        <Text style={Styles.HeadingText}>グループを選択</Text>
+        <Text style={Styles.HeadingText}>グループ選択</Text>
         <View style={Styles.buttonKusatsu}>
           <TouchableOpacity onPress={() => props.joinRoom(RoomId.KUSATSU)}>
             <Text style={Styles.buttonTextKusatsu}>

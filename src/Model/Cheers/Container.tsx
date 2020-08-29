@@ -16,10 +16,10 @@ export const SendCheer = (roomId: RoomId, time: number): void => {
 };
 
 export const SetCheeredListener = (
-  setCheered: React.Dispatch<React.SetStateAction<ResponseObj>>
+  setCheered: React.Dispatch<React.SetStateAction<number>>
 ): void => {
-  socket.on("cheered", (msg: ResponseObj) => {
-    setCheered(msg);
+  socket.on("cheered", (time: number) => {
+    setCheered(time);
     return;
   });
 };

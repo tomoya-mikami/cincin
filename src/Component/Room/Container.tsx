@@ -1,6 +1,7 @@
 import React from "react";
-import { Button, View, Text } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import { RoomId, RoomIdLabel } from "../../Const/RoomId";
+import Styles from "./Style";
 
 interface ContainerProps {
   joinRoom: (roomId: RoomId) => void;
@@ -10,33 +11,35 @@ interface ContainerProps {
 // ボタンを押した際にサーバーにルームIDを送る
 const Container = (props: ContainerProps): React.ReactElement => {
   return (
-    <View>
-      <Text>部屋を選んでください</Text>
-      <Button
-        title={RoomIdLabel[RoomId.KUSATSU]}
-        color="#f194ff"
-        onPress={() => props.joinRoom(RoomId.KUSATSU)}
-      />
-      <Button
-        title={RoomIdLabel[RoomId.HAKONE]}
-        color="#f194ff"
-        onPress={() => props.joinRoom(RoomId.HAKONE)}
-      />
-      <Button
-        title={RoomIdLabel[RoomId.AKIU]}
-        color="#f194ff"
-        onPress={() => props.joinRoom(RoomId.AKIU)}
-      />
-      <Button
-        title={RoomIdLabel[RoomId.ARIMA]}
-        color="#f194ff"
-        onPress={() => props.joinRoom(RoomId.ARIMA)}
-      />
-      <Button
-        title={RoomIdLabel[RoomId.DOGO]}
-        color="#f194ff"
-        onPress={() => props.joinRoom(RoomId.DOGO)}
-      />
+    <View style={Styles.container}>
+      <View style={Styles.buttonContainer}>
+        <Text style={Styles.HeadingText}>グループを選択</Text>
+        <View style={Styles.button}>
+          <TouchableOpacity onPress={() => props.joinRoom(RoomId.KUSATSU)}>
+            <Text style={Styles.buttonText}>{RoomIdLabel[RoomId.KUSATSU]}</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={Styles.button}>
+          <TouchableOpacity onPress={() => props.joinRoom(RoomId.HAKONE)}>
+            <Text style={Styles.buttonText}>{RoomIdLabel[RoomId.HAKONE]}</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={Styles.button}>
+          <TouchableOpacity onPress={() => props.joinRoom(RoomId.AKIU)}>
+            <Text style={Styles.buttonText}>{RoomIdLabel[RoomId.AKIU]}</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={Styles.button}>
+          <TouchableOpacity onPress={() => props.joinRoom(RoomId.ARIMA)}>
+            <Text style={Styles.buttonText}>{RoomIdLabel[RoomId.ARIMA]}</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={Styles.button}>
+          <TouchableOpacity onPress={() => props.joinRoom(RoomId.DOGO)}>
+            <Text style={Styles.buttonText}>{RoomIdLabel[RoomId.DOGO]}</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
     </View>
   );
 };

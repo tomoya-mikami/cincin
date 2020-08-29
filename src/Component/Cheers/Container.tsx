@@ -2,7 +2,9 @@ import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, View, Vibration, Button } from "react-native";
 import { Accelerometer, ThreeAxisMeasurement } from "expo-sensors";
 import { Subscription } from "@unimodules/core";
+import PlayAudio from "../Audio/PlayAudio";
 import { RoomIdLabel } from "../../Const/RoomId";
+import { AudioId } from "../../Const/AudioId";
 
 const UPDATE_MS = 100;
 const THRESHOLD = 800;
@@ -80,6 +82,9 @@ const Container = (props: ContainerProps): React.ReactElement => {
     setSpeed(diff);
     if (speed > THRESHOLD) {
       Vibration.vibrate(PATTERN);
+      (async () => {
+        await PlayAudio(AudioId.DEFAULT_CIN);
+      })();
     }
     setLastThreeAxisMeasurement(data);
   }, [data.x, data.y, data.z]);

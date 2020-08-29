@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, Text, View, Vibration, Button } from "react-native";
+import { Text, View, Vibration, Button } from "react-native";
 import { Accelerometer, ThreeAxisMeasurement } from "expo-sensors";
 import { Subscription } from "@unimodules/core";
+import { Audio } from "expo-av";
 import { RoomIdLabel } from "../../Const/RoomId";
+import { AudioId } from "../../Const/AudioId";
+import { AudioPath } from "../../Const/AudioId";
+import Styles from "./Style";
 
 const UPDATE_MS = 100;
 const THRESHOLD = 800;
@@ -10,33 +14,6 @@ const THRESHOLD = 800;
 const ONE_SECOND_IN_MS = 1000;
 
 const PATTERN = [1 * ONE_SECOND_IN_MS];
-
-const styles = StyleSheet.create({
-  buttonContainer: {
-    flexDirection: "row",
-    alignItems: "stretch",
-    marginTop: 15,
-  },
-  button: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#eee",
-    padding: 10,
-  },
-  middleButton: {
-    borderLeftWidth: 1,
-    borderRightWidth: 1,
-    borderColor: "#ccc",
-  },
-  sensor: {
-    marginTop: 45,
-    paddingHorizontal: 10,
-  },
-  text: {
-    textAlign: "center",
-  },
-});
 
 // 計算がばいので修正
 const diffMeasurement = (
@@ -64,12 +41,27 @@ const Container = (props: ContainerProps): React.ReactElement => {
   const [subscription, setSubscription] = useState<Subscription | undefined>(
     undefined
   );
+  const [sound, setSound] = useState<Audio.Sound | undefined>(undefined);
 
   useEffect(() => {
-    _subscribe();
-    Accelerometer.setUpdateInterval(UPDATE_MS);
+    (async () => {
+      try {
+        const soundSetUp = new Audio.Sound();
+        await soundSetUp.loadAsync(AudioPath[AudioId.DEFAULT_CIN]);
+        setSound(soundSetUp);
+      } catch (error) {
+        console.log(error);
+      }
+      _subscribe();
+      Accelerometer.setUpdateInterval(UPDATE_MS);
+    })();
     return () => {
-      _unsubscribe();
+      (async () => {
+        if (sound !== undefined) {
+          await sound.unloadAsync();
+        }
+        _unsubscribe();
+      })();
     };
   }, []);
 
@@ -80,17 +72,12 @@ const Container = (props: ContainerProps): React.ReactElement => {
     setSpeed(diff);
     if (speed > THRESHOLD) {
       Vibration.vibrate(PATTERN);
+      if (sound !== undefined) {
+        sound.replayAsync();
+      }
     }
     setLastThreeAxisMeasurement(data);
   }, [data.x, data.y, data.z]);
-
-  useEffect(() => {
-    _subscribe();
-    Accelerometer.setUpdateInterval(UPDATE_MS);
-    return () => {
-      _unsubscribe();
-    };
-  }, []);
 
   const _subscribe = () => {
     const listener = Accelerometer.addListener((accelerometerData) => {
@@ -105,11 +92,11 @@ const Container = (props: ContainerProps): React.ReactElement => {
   };
 
   return (
-    <View style={styles.sensor}>
-      <Text style={styles.text}>
+    <View style={Styles.sensor}>
+      <Text style={Styles.text}>
         Accelerometer: (in Gs where 1 G = 9.81 m s^-2)
       </Text>
-      <Text style={styles.text}>
+      <Text style={Styles.text}>
         x: {round(data.x)} y: {round(data.y)} z: {round(data.z)} speed: {speed}
       </Text>
       <Button

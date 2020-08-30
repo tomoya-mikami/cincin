@@ -10,6 +10,7 @@ import {
   SendCheer,
   SetCheeredListener,
   Disconnect,
+  Connect,
 } from "../../Model/Cheers/Container";
 
 const UPDATE_MS = 100;
@@ -58,6 +59,7 @@ const Container = (props: ContainerProps): React.ReactElement => {
     (async () => {
       if (isFirstAccess) {
         try {
+          Connect();
           const soundSetUp = new Audio.Sound();
           await soundSetUp.loadAsync(AudioPath[AudioId.DEFAULT_CIN]);
           setSound(soundSetUp);

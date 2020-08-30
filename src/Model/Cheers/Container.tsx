@@ -28,3 +28,8 @@ export const Disconnect = (): void => {
   socket.disconnect();
   return;
 };
+
+export const Connect = (): void => {
+  socket.connect();
+  return;
+};

@@ -13,12 +13,21 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.tm-paseri.cincin"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/favicon.png",
+      "bundleIdentifier": "com.satorilab.cincin",
+      "buildNumber": "1.0.0"
+    },
+    "android": {
+      "package": "com.tmpaseri.cincin",
+      "versionCode": 1
     }
   },
   "description": "オンライン飲み会での乾杯を楽しくするアプリです"

@@ -1,7 +1,7 @@
 import io from "socket.io-client";
 import { RoomId, ResponseObj } from "../../Const/RoomId";
 
-const socket = io("https://spajam-satori.an.r.appspot.com", {
+const socket = io("localhost://", {
   transports: ["websocket"],
 });
 
